@@ -1,10 +1,17 @@
 import { Link, Outlet } from 'react-router-dom';
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import './navigation.styles.scss';
 
 import { ReactComponent as CryxLogo } from '../../assets/crown.svg';
+import { UserContext } from '../../context/user.context';
+import { signOutUser } from '../../utils/firebase/firebase.utils';
 
 const Navigation = () => {
+  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const signOutHandler = async () => {
+    const res = await signOutUser();
+    setCurrentUser(null);
+  };
   return (
     <Fragment>
       <div className="navigation">
@@ -15,9 +22,15 @@ const Navigation = () => {
           <Link className="nav-link" to="/shop">
             SHOP
           </Link>
-          <Link className="nav-link" to="/auth">
-            SIGNIN
-          </Link>
+          {currentUser ? (
+            <span className="nav-link" onClick={signOutHandler}>
+              AUSLOGGEN
+            </span>
+          ) : (
+            <Link className="nav-link" to="/auth">
+              EINLOGGEN
+            </Link>
+          )}
         </div>
       </div>
       <Outlet />
